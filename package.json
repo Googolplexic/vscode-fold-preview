@@ -1,0 +1,122 @@
+{
+  "name": "fold-preview",
+  "displayName": "FOLD Preview",
+  "description": "Preview FOLD origami files and format the text as JSON",
+  "version": "0.0.1",
+  "publisher": "fold-preview",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCustomEditor:fold-preview.preview",
+    "onCommand:fold-preview.openPreview"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "FOLD Preview",
+      "properties": {
+        "fold-preview.tabSize": {
+          "type": "number",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 8,
+          "description": "Number of spaces to use for indentation in FOLD files"
+        }
+      }
+    },
+    "customEditors": [
+      {
+        "viewType": "fold-preview.preview",
+        "displayName": "FOLD Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.fold"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "capabilities": {
+      "documentFormattingProvider": "true"
+    },
+    "languages": [
+      {
+        "id": "fold",
+        "extensions": [
+          ".fold"
+        ],
+        "aliases": [
+          "FOLD",
+          "fold"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/fold-light.png",
+          "dark": "./icons/fold-dark.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "fold",
+        "scopeName": "source.json",
+        "path": "./syntaxes/json.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "fold-preview.openPreview",
+        "title": "Open Preview to the Side",
+        "category": "FOLD",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "fold-preview.format",
+        "title": "Format FOLD Document",
+        "category": "FOLD"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "fold-preview.openPreview",
+          "when": "editorLangId == fold",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "fold-preview.format",
+          "when": "editorLangId == fold",
+          "group": "1_modification"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "fold-preview.openPreview",
+        "key": "ctrl+k v",
+        "mac": "cmd+k v",
+        "when": "editorLangId == fold"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "typescript": "^5.0.4"
+  }
+}
