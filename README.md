@@ -1,81 +1,100 @@
-# FOLD Preview
+# FOLD Preview - VS Code Extension
 
-Interactive preview and editor support for FOLD (Flexible Origami File Format) files. View, edit, and format your .fold files with ease.
+A VS Code extension for previewing and editing FOLD (Flexible Origami File Format) files. This extension provides syntax highlighting, formatting, and an interactive preview for .fold files.
+
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
+[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
+[![GitHub](https://img.shields.io/github/license/Googolplexic/vscode-fold-preview)](https://github.com/Googolplexic/vscode-fold-preview/blob/main/LICENSE)
 
 ## Features
 
-### 🔍 Interactive Preview
-Watch your FOLD files come to life with a real-time, interactive preview:
-- Pan and zoom controls
-- Color-coded mountain and valley folds
-- Live updates as you edit
-- Keyboard shortcuts for quick navigation
+### Interactive Preview
+- Live preview of FOLD files with pan and zoom capabilities
+- Color-coded visualization of mountain and valley folds
+- Auto-updates as you edit the file
+- Keyboard shortcuts for common actions
 
-![Preview Demo](media/image.png)
-
-### ✨ Editor Enhancements
-Work efficiently with powerful editor features:
-- Syntax highlighting
-- Customizable JSON formatting
+### Editor Features
+- Syntax highlighting for .fold files
+- JSON formatting with customizable indentation
 - Format on save support
-- Custom file icons
-- Smart bracket matching
+- Custom file icon with folded corner design
+- Bracket matching and auto-closing pairs
 
-## Quick Start
+## Installation
 
-1. Open a .fold file
-2. Click the preview icon in the editor title bar (or use `Ctrl+K V` / `Cmd+K V`)
-3. Edit your file and watch the preview update in real-time
+Install from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview) or:
+
+1. Open VS Code
+2. Press `Ctrl+P` (`Cmd+P` on macOS)
+3. Type `ext install ColemanLai.fold-preview`
+4. Press Enter
+
+## Usage
+
+### Opening the Preview
+- Click the "Open Preview to the Side" button in the editor title area
+- Use the keyboard shortcut `Ctrl+K V` (`Cmd+K V` on macOS)
+- Right-click on a .fold file and select "Open With... > FOLD Preview"
 
 ### Preview Controls
-- 🖱️ **Zoom**: Mouse wheel or `+`/`-` keys
-- 🖐️ **Pan**: Click and drag
-- 🔄 **Reset**: `R` key or "Reset Zoom" button
-- 📐 **Fit**: `F` key or "Fit to View" button
+- Zoom: Mouse wheel or `+`/`-` keys
+- Pan: Click and drag
+- Reset View: `R` key or "Reset Zoom" button
+- Fit to View: `F` key or "Fit to View" button
 
 ### Formatting
-Keep your FOLD files clean and consistent:
-- Format Document: `Shift+Alt+F`
-- Right-click → Format Document
-- Automatic formatting on save (optional)
+- Use `Shift+Alt+F` to format the document
+- Right-click and select "Format Document"
+- Enable format on save in VS Code settings
 
 ## Configuration
 
-Customize the indentation in your settings:
+### Indentation
+Customize the number of spaces used for indentation in your VS Code settings:
+
 ```json
 {
-    "fold-preview.tabSize": 2  // Set your preferred indent size (1-8)
+    "fold-preview.tabSize": 2  // Default is 2, range: 1-8
 }
 ```
 
-## Color Guide
-The preview uses intuitive colors:
-- ⚫ **Black**: Boundary edges
-- 🔴 **Red**: Mountain folds
-- 🔵 **Blue**: Valley folds
+## Line Types
+The preview uses different colors to represent fold types:
+- Black: Boundary edges
+- Red: Mountain folds
+- Blue: Valley folds
 
 ## Requirements
 
-Visual Studio Code version 1.80.0 or higher
+- Visual Studio Code version 1.80.0 or higher
 
-## Credits
+## Known Issues and Feature Requests
+
+Please report any issues or feature requests on the [GitHub repository](https://github.com/Googolplexic/vscode-fold-preview/issues).
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Acknowledgements
 
 - FOLD file specification: https://github.com/edemaine/fold
 - Claude AI by Anthropic
 
-## Support
+## License
 
-Found a bug or have a suggestion? Please report it on our [GitHub repository](https://github.com/Googolplexic/vscode-fold-preview/issues).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Release Notes
 
 ### 0.0.1
-Initial release with:
-- Interactive preview
-- JSON formatting
+- Initial release
+- Basic preview functionality
+- JSON formatting support
 - Custom file icons
 - Syntax highlighting
 
 ---
 
-**Enjoy working with FOLD files!**
+**Enjoy!**
