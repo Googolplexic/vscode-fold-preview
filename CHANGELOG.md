@@ -2,6 +2,10 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 1.1.1
+- Update naming
+- README wasn't updated for some reason so added it again
+
 ### 1.1.0
 - Added indexed labeling system
   - Toggle labels for vertices, edges, and faces

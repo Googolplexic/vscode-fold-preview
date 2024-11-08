@@ -1,7 +1,7 @@
 {
   "name": "fold-preview",
-  "displayName": "Origami FOLD File Preview",
-  "description": "Preview FOLD origami files and format the text as JSON",
+  "displayName": "Origami FOLD File Visualizer and Format",
+  "description": "Preview and format origami FOLD files",
   "version": "1.1.0",
   "publisher": "ColemanLai",
   "marketplace": {
