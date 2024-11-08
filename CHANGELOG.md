@@ -8,3 +8,6 @@ Initial release with:
 - JSON formatting
 - Custom file icons
 - Syntax highlighting
+
+### 0.0.2
+- Updated README files

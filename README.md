@@ -88,13 +88,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Release Notes
 
-### 0.0.1
-- Initial release
-- Basic preview functionality
-- JSON formatting support
-- Custom file icons
-- Syntax highlighting
-
+See [CHANGELOG.md](https://github.com/Googolplexic/vscode-fold-preview/CHANGELOG.md)
 ---
 
 **Enjoy!**
