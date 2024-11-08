@@ -12,7 +12,7 @@ Watch your FOLD files come to life with a real-time, interactive preview:
 - Keyboard shortcuts for quick navigation
 - Interactive legend
 
-![Preview Demo](media/image.png)
+![Preview](media/image.png)
 
 ### ✨ Editor Enhancements
 Work efficiently with powerful editor features:

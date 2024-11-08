@@ -2,6 +2,10 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 0.0.4
+- Updated legend display
+- Updated README image 
+
 ### 0.0.3
 - Added extensive customization options:
   - Configurable colors for all fold types

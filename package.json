@@ -2,7 +2,7 @@
   "name": "fold-preview",
   "displayName": "FOLD Preview",
   "description": "Preview FOLD origami files and format the text as JSON",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "ColemanLai",
   "marketplace": {
     "markdown": "MARKETPLACE.md",
@@ -266,6 +266,7 @@
   },
   "scripts": {
     "publish-extension": "npm run prepare-marketplace && vsce publish && npm run restore-readme",
+    "package-extension": "npm run prepare-marketplace && vsce package && npm run restore-readme",
     "prepare-marketplace": "ren README.md README.github.md && ren MARKETPLACE.md README.md",
     "restore-readme": "ren README.md MARKETPLACE.md && ren README.github.md README.md",
     "vscode:prepublish": "npm run compile",

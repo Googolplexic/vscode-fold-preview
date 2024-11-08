@@ -203,12 +203,12 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         min-width: 100px;
                     }
                     .legend-color {
-                        width: 20px;
+                        width: 30px;
                         margin-top: 8px;
                     }
                     .legend-canvas {
-                        width: 20px;
-                        height: 20px;
+                        width: 30px;
+                        height: 10px;
                     }
                 </style>
             </head>
@@ -249,62 +249,47 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         ];
 
                         legendDiv.innerHTML = items.map(item => {
-                            let legendItem;
-                            if (item.style === 'dashed-dotted') {
-                                // Create a mini-canvas for dash-dot pattern
-                                legendItem = '<div class="legend-item">' +
-                                            '<canvas class="legend-canvas" width="20" height="20" ' +
-                                            'data-color="' + item.color + '" ' +
-                                            'data-style="dashed-dotted"></canvas>' +
-                                            item.type +
-                                            '</div>';
-                            } else {
-                                const styles = [
-                                    'background: ' + item.color,
-                                    'width: 20px',
-                                    'height: ' + config.lineStyles.lineWidth + 'px'
-                                ];
-                                
-                                if (item.style) {
-                                    switch(item.style) {
-                                        case 'dashed':
-                                            styles.push('border-top-style: dashed');
-                                            styles.push('border-top-width: ' + config.lineStyles.lineWidth + 'px');
-                                            styles.push('border-top-color: ' + item.color);
-                                            styles.push('background: none');
-                                            break;
-                                        case 'dotted':
-                                            styles.push('border-top-style: dotted');
-                                            styles.push('border-top-width: ' + config.lineStyles.lineWidth + 'px');
-                                            styles.push('border-top-color: ' + item.color);
-                                            styles.push('background: none');
-                                            break;
-                                    }
-                                }
-                                
-                                legendItem = '<div class="legend-item">' +
-                                            '<div class="legend-color" style="' + styles.join(';') + '"></div>' +
-                                            item.type +
-                                            '</div>';
-                            }
-                            return legendItem;
+                            return '<div class="legend-item">' +
+                                '<canvas class="legend-canvas" width="32" height="10" ' +
+                                'data-color="' + item.color + '" ' +
+                                'data-style="' + (item.style || 'solid') + '"></canvas>' +
+                                item.type +
+                                '</div>';
                         }).join('');
 
-                        // Initialize any mini-canvases for dash-dot patterns
+                        // Initialize all canvases
                         document.querySelectorAll('.legend-canvas').forEach(canvas => {
                             const ctx = canvas.getContext('2d');
                             const color = canvas.getAttribute('data-color');
+                            const style = canvas.getAttribute('data-style');
                             
-                            // Clear canvas
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            // Clear canvas and set background color to match main canvas
+                            ctx.fillStyle = config.canvas.backgroundColor;
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
                             
-                            // Draw dash-dot pattern
+                            // Draw line
                             ctx.beginPath();
                             ctx.strokeStyle = color;
                             ctx.lineWidth = config.lineStyles.lineWidth;
-                            ctx.setLineDash([5, 5, 1, 5]);
-                            ctx.moveTo(0, 10);
-                            ctx.lineTo(20, 10);
+                            
+                            // Set line style
+                            switch(style) {
+                                case 'dashed':
+                                    ctx.setLineDash([5, 4]);
+                                    break;
+                                case 'dotted':
+                                    ctx.setLineDash([2, 4]);
+                                    break;
+                                case 'dashed-dotted':
+                                    ctx.setLineDash([5, 4, 2, 4]);
+                                    break;
+                                default:
+                                    ctx.setLineDash([]);
+                            }
+                            
+                            // Draw the line in the middle of the canvas
+                            ctx.moveTo(0, 5);
+                            ctx.lineTo(32, 5);
                             ctx.stroke();
                         });
                     }
@@ -318,7 +303,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             ctx.setLineDash([1, 5]);
                             break;
                         case 'dashed-dotted':
-                            ctx.setLineDash([5, 5, 1, 5]); // Line, gap, dot, gap pattern
+                            ctx.setLineDash([5, 5, 1, 5]);
                             break;
                         default:
                             ctx.setLineDash([]);
