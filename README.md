@@ -152,7 +152,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Release Notes
 
-See [CHANGELOG.md](https://github.com/Googolplexic/vscode-fold-preview/CHANGELOG.md)
+See [CHANGELOG.md](https://github.com/Googolplexic/vscode-fold-preview/blob/main/CHANGELOG.md)
 
 ---
 
