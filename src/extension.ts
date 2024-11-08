@@ -1,58 +1,15 @@
 import * as vscode from 'vscode';
-import { FoldPreviewConfig, WebviewMessage, FoldPreviewSettings } from './types';
+import { WebviewMessage, WorkspaceConfigLike } from './types';
 
 class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
     public static readonly viewType = 'fold-preview.preview';
-    private config: FoldPreviewConfig;
     private webviewPanels: vscode.WebviewPanel[] = [];
 
-    constructor(
-        private readonly context: vscode.ExtensionContext
-    ) {
-        this.config = this.loadConfiguration();
-        // Watch for configuration changes
+    constructor(private readonly context: vscode.ExtensionContext) {
         vscode.workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration('fold-preview')) {
-                this.config = this.loadConfiguration();
                 this.updateAllWebviews();
             }
-        });
-    }
-
-    private loadConfiguration(): FoldPreviewConfig {
-        const config = vscode.workspace.getConfiguration('fold-preview');
-        return {
-            colors: {
-                mountain: config.get('colors.mountain', '#FF0000'),
-                valley: config.get('colors.valley', '#0000FF'),
-                boundary: config.get('colors.boundary', '#000000'),
-                flat: config.get('colors.flat', '#808080'),
-                unassigned: config.get('colors.unassigned', '#CCCCCC')
-            },
-            lineStyles: {
-                lineWidth: config.get('lineStyles.lineWidth', 2),
-                mountainStyle: config.get('lineStyles.mountainStyle', 'solid'),
-                valleyStyle: config.get('lineStyles.valleyStyle', 'solid')
-            },
-            vertices: {
-                show: config.get('vertices.show', true),
-                radius: config.get('vertices.radius', 2),
-                color: config.get('vertices.color', '#000000')
-            },
-            canvas: {
-                backgroundColor: config.get('canvas.backgroundColor', '#FFFFFF'),
-                padding: config.get('canvas.padding', 40),
-                zoomSpeed: config.get('canvas.zoomSpeed', 0.1)
-            }
-        };
-    }
-
-    private updateAllWebviews() {
-        this.webviewPanels.forEach(panel => {
-            panel.webview.postMessage({
-                type: 'configUpdate',
-                config: this.config
-            } as WebviewMessage);
         });
     }
 
@@ -60,7 +17,6 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
         console.log('Registering FOLD Preview provider...');
         const provider = new FoldPreviewProvider(context);
 
-        // Register the preview command
         const previewCommand = vscode.commands.registerCommand('fold-preview.openPreview', async () => {
             const activeEditor = vscode.window.activeTextEditor;
             if (!activeEditor) {
@@ -81,7 +37,6 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
             }
         });
 
-        // Register the custom editor provider
         const providerRegistration = vscode.window.registerCustomEditorProvider(
             FoldPreviewProvider.viewType,
             provider,
@@ -92,6 +47,17 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
         );
 
         return [previewCommand, providerRegistration];
+    }
+
+    private updateAllWebviews() {
+        const config = vscode.workspace.getConfiguration('fold-preview') as unknown as WorkspaceConfigLike;
+        this.webviewPanels.forEach(panel => {
+            panel.webview.postMessage({
+                type: 'configUpdate',
+                content: '',
+                config
+            } satisfies WebviewMessage);
+        });
     }
 
     async resolveCustomTextEditor(
@@ -117,16 +83,17 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
         const updateWebview = () => {
             try {
                 const json = JSON.parse(document.getText());
+                const config = vscode.workspace.getConfiguration('fold-preview') as unknown as WorkspaceConfigLike;
                 webviewPanel.webview.postMessage({
                     type: 'update',
                     content: JSON.stringify(json, null, 2),
-                    config: this.config
-                } as WebviewMessage);
+                    config
+                } satisfies WebviewMessage);
             } catch (error) {
                 webviewPanel.webview.postMessage({
                     type: 'error',
                     content: 'Invalid JSON format'
-                } as WebviewMessage);
+                } satisfies WebviewMessage);
             }
         };
 

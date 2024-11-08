@@ -1,57 +1,27 @@
 // types.ts
-
-export interface FoldFile {
-    file_spec: number;
-    file_creator: string;
-    vertices_coords: [number, number][];
-    edges_vertices: [number, number][];
-    edges_assignment: EdgeAssignment[];
-    vertices_edges?: number[][];
-    faces_vertices?: number[][];
-}
-
 export type EdgeAssignment = 'M' | 'V' | 'B' | 'F' | 'U';
 
-export interface WebviewMessage {
-    type: 'update' | 'error' | 'configUpdate';
-    content: string;
-    config?: FoldPreviewConfig;
-}
+export type LineStyle = 'solid' | 'dashed' | 'dotted' | 'dashed-dotted';
 
-export interface FoldPreviewState {
-    scale: number;
-    offsetX: number;
-    offsetY: number;
-}
+export type WebviewMessage =
+    | { type: 'update'; content: string; config: WorkspaceConfigLike }
+    | { type: 'error'; content: string }
+    | { type: 'configUpdate'; content: string; config: WorkspaceConfigLike };
 
-export interface FoldPreviewConfig {
-    colors: {
-        mountain: string;
-        valley: string;
-        boundary: string;
-        flat: string;
-        unassigned: string;
-    };
-    lineStyles: {
-        lineWidth: number;
-        mountainStyle: LineStyle;
-        valleyStyle: LineStyle;
-    };
-    vertices: {
-        show: boolean;
-        radius: number;
-        color: string;
-    };
-    canvas: {
-        backgroundColor: string;
-        padding: number;
-        zoomSpeed: number;
-    };
-}
-
-export type LineStyle = 'solid' | 'dashed' | 'dotted';
-
-export interface FoldPreviewSettings {
-    tabSize: number;
-    config: FoldPreviewConfig;
-}
+export type WorkspaceConfigLike = {
+    get(section: 'colors.mountain'): string;
+    get(section: 'colors.valley'): string;
+    get(section: 'colors.boundary'): string;
+    get(section: 'colors.flat'): string;
+    get(section: 'colors.unassigned'): string;
+    get(section: 'lineStyles.lineWidth'): number;
+    get(section: 'lineStyles.mountainStyle'): LineStyle;
+    get(section: 'lineStyles.valleyStyle'): LineStyle;
+    get(section: 'vertices.show'): boolean;
+    get(section: 'vertices.radius'): number;
+    get(section: 'vertices.color'): string;
+    get(section: 'canvas.backgroundColor'): string;
+    get(section: 'canvas.padding'): number;
+    get(section: 'canvas.zoomSpeed'): number;
+    [key: string]: unknown;
+};

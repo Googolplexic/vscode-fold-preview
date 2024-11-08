@@ -78,6 +78,7 @@ Visual Studio Code version 1.80.0 or higher
 
 - FOLD file specification: https://github.com/edemaine/fold
 - Claude AI by Anthropic
+- VSCode extension documentation
 
 ## Support
 

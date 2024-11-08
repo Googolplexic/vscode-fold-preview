@@ -2,6 +2,9 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 1.0.1
+- Refactored and cleaned up code
+
 ### 1.0.0
 **Ready for full release**
 - Updated zoom function
