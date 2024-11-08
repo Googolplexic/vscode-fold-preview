@@ -2,7 +2,10 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
-### 1.1.2
+### 1.2.1
+- Forgot to update image agin
+
+### 1.2.0 (renamed from 1.1.2)
 - Improved label system:
   - Added automatic scaling with zoom level
   - Fixed label styles to match configuration exactly
