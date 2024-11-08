@@ -67,7 +67,7 @@ The preview uses different colors to represent fold types:
 
 ## Known Issues
 
-Please report any issues on the [GitHub repository](https://github.com/yourusername/fold-preview/issues).
+Please report any issues on the [GitHub repository](https://github.com/Googolplexic/vscodefold-preview/issues).
 
 ## Contributing
 

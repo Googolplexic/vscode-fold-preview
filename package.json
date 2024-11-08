@@ -4,6 +4,14 @@
   "description": "Preview FOLD origami files and format the text as JSON",
   "version": "0.0.1",
   "publisher": "fold-preview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Googolplexic/vscode-fold-preview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Googolplexic/vscode-fold-preview/issues"
+  },
+  "homepage": "https://github.com/Googolplexic/vscode-fold-preview",
   "engines": {
     "vscode": "^1.80.0"
   },
