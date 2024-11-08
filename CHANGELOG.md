@@ -2,6 +2,17 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 1.1.2
+- Improved label system:
+  - Added automatic scaling with zoom level
+  - Fixed label styles to match configuration exactly
+- Enhanced legend display:
+  - Updated to show current label styles
+  - Added proper label previews
+  - Face labels now only show when available in data
+- Fixed various rendering issues
+- Updated documentation
+
 ### 1.1.1
 - Update naming
 - README wasn't updated for some reason so added it again

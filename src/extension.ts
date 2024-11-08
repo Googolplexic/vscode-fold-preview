@@ -162,21 +162,41 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         margin: 10px;
                         font-family: var(--vscode-editor-font-family);
                         flex-wrap: wrap;
+                        border-top: 1px solid var(--vscode-panel-border);
+                        padding-top: 10px;
                     }
+
                     .legend-item {
                         display: flex;
                         align-items: center;
                         gap: 5px;
                         min-width: 100px;
                     }
-                    .legend-color {
-                        width: 30px;
-                        margin-top: 8px;
+
+                    .legend-section {
+                        display: flex;
+                        gap: 20px;
+                        flex-wrap: wrap;
+                        margin-right: 40px;
+                        padding-right: 40px;
+                        border-right: 1px solid var(--vscode-panel-border);
                     }
-                    .legend-canvas {
-                        width: 30px;
-                        height: 10px;
-                    },
+
+                    .legend-section:last-child {
+                        border-right: none;
+                    }
+
+                    .legend-label-preview {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        border: 1px solid var(--vscode-panel-border);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 10px;
+                        margin-right: 5px;
+                    }
                     .controls {
                         display: flex;
                         gap: 10px;
@@ -303,9 +323,8 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         ctx.fillStyle = textColor;
                         ctx.fillText(text, x, y);
                     }
-
-                    function updateLegend(config) {
-                        const items = [
+                    function updateLegend(config, data) {  // Add data parameter
+                        const lineItems = [
                             { type: 'Boundary', color: config.colors.boundary },
                             { type: 'Mountain', color: config.colors.mountain, style: config.lineStyles.mountainStyle },
                             { type: 'Valley', color: config.colors.valley, style: config.lineStyles.valleyStyle },
@@ -313,16 +332,82 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             { type: 'Unassigned', color: config.colors.unassigned }
                         ];
 
-                        legendDiv.innerHTML = items.map(item => {
-                            return '<div class="legend-item">' +
+                        // Only include face labels if faces_vertices exists
+                        const labelItems = [
+                            { 
+                                type: 'Vertex Labels', 
+                                background: config.labels.vertex.background,
+                                border: config.labels.circleBorder,
+                                borderWidth: config.labels.borderWidth,
+                                fontSize: config.labels.fontSize,
+                                textColor: config.labels.textColor,
+                                sample: '0'
+                            },
+                            { 
+                                type: 'Edge Labels', 
+                                background: config.labels.edge.background,
+                                border: config.labels.circleBorder,
+                                borderWidth: config.labels.borderWidth,
+                                fontSize: config.labels.fontSize,
+                                textColor: config.labels.textColor,
+                                sample: '1'
+                            }
+                        ];
+
+                        // Only add face labels if faces_vertices exists and is an array
+                        if (data && data.faces_vertices && Array.isArray(data.faces_vertices)) {
+                            labelItems.push({ 
+                                type: 'Face Labels', 
+                                background: config.labels.face.background,
+                                border: config.labels.circleBorder,
+                                borderWidth: config.labels.borderWidth,
+                                fontSize: config.labels.fontSize,
+                                textColor: config.labels.textColor,
+                                sample: '2'
+                            });
+                        }
+
+                        // Only show legend if there are items
+                        const legendDiv = document.getElementById('legend');
+                        if (!lineItems.length && !labelItems.length) {
+                            legendDiv.style.display = 'none';
+                            return;
+                        }
+                        legendDiv.style.display = 'flex';
+
+                        // Create the line items section
+                        const lineItemsHtml = lineItems.map(item => 
+                            '<div class="legend-item">' +
                                 '<canvas class="legend-canvas" width="32" height="10" ' +
                                 'data-color="' + item.color + '" ' +
                                 'data-style="' + (item.style || 'solid') + '"></canvas>' +
                                 item.type +
-                                '</div>';
-                        }).join('');
+                            '</div>'
+                        ).join('');
 
-                        // Initialize all legend canvases
+                        // Create the label items section with matching styles
+                        const labelItemsHtml = labelItems.map(item => 
+                            '<div class="legend-item">' +
+                                '<div class="legend-label-preview" style="' +
+                                'background-color: ' + item.background + '; ' +
+                                'border-color: ' + item.border + '; ' +
+                                'border-width: ' + (item.borderWidth / zoomLevel) + 'px; ' +  // Scale border width like in canvas
+                                'font-size: ' + (item.fontSize / zoomLevel) + 'px; ' +        // Scale font size like in canvas
+                                'color: ' + item.textColor + '; ' +
+                                'width: ' + (config.labels.circleRadius * 2 / zoomLevel) + 'px; ' +  // Scale circle size like in canvas
+                                'height: ' + (config.labels.circleRadius * 2 / zoomLevel) + 'px;">' +
+                                item.sample +
+                                '</div>' +
+                                item.type +
+                            '</div>'
+                        ).join('');
+
+                        // Combine both sections
+                        legendDiv.innerHTML = 
+                            '<div class="legend-section">' + lineItemsHtml + '</div>' +
+                            '<div class="legend-section">' + labelItemsHtml + '</div>';
+
+                        // Initialize line style canvases
                         document.querySelectorAll('.legend-canvas').forEach(canvas => {
                             const ctx = canvas.getContext('2d');
                             const color = canvas.getAttribute('data-color');
@@ -335,7 +420,6 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             ctx.strokeStyle = color;
                             ctx.lineWidth = config.lineStyles.lineWidth;
                             
-                            // Use same dash pattern scaling for legend
                             switch(style) {
                                 case 'dashed':
                                     ctx.setLineDash([5, 4]);
@@ -355,7 +439,6 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             ctx.stroke();
                         });
                     }
-
                     function setDashPattern(style) {
                         // Scale the dash patterns based on zoom level
                         const scale = 1 / zoomLevel;
@@ -473,7 +556,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                                     currentData = JSON.parse(message.content);
                                     currentConfig = message.config;
                                     errorDiv.textContent = '';
-                                    updateLegend(currentConfig);
+                                    updateLegend(currentConfig, currentData);
                                     renderFold(currentData);
                                 } catch (error) {
                                     errorDiv.textContent = 'Error parsing FOLD data: ' + error.message;
@@ -481,7 +564,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                                 break;
                             case 'configUpdate':
                                 currentConfig = message.config;
-                                updateLegend(currentConfig);
+                                updateLegend(currentConfig, currentData);
                                 if (currentData) {
                                     renderFold(currentData);
                                 }
@@ -610,7 +693,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             });
                         }
 
-                        if (showFaceLabels && data.faces_vertices) {
+                        if (showFaceLabels && data.faces_vertices && Array.isArray(data.faces_vertices)) {
                             data.faces_vertices.forEach((vertices, i) => {
                                 const centerX = vertices.reduce((sum, v) => sum + data.vertices_coords[v][0], 0) / vertices.length;
                                 const centerY = vertices.reduce((sum, v) => sum + data.vertices_coords[v][1], 0) / vertices.length;
@@ -618,6 +701,13 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                                 const ty = (centerY - minY) * baseScale + offsetY;
                                 drawLabelCircle(ctx, tx, ty, i.toString(), 'face');
                             });
+                        }
+
+                        // Update the checkbox visibility based on available data
+                        const faceLabelsCheckbox = document.getElementById('showFaceLabels');
+                        if (faceLabelsCheckbox) {
+                            faceLabelsCheckbox.closest('.toggle-label').style.display = 
+                                data.faces_vertices && Array.isArray(data.faces_vertices) ? 'flex' : 'none';
                         }
 
                         ctx.restore();
