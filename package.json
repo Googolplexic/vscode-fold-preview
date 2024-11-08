@@ -119,6 +119,9 @@
     ]
   },
   "scripts": {
+    "publish-extension": "npm run prepare-marketplace && vsce publish && npm run restore-readme",
+    "prepare-marketplace": "ren README.md README.github.md && ren MARKETPLACE.md README.md",
+    "restore-readme": "ren README.md MARKETPLACE.md && ren README.github.md README.md",
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
