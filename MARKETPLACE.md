@@ -1,15 +1,16 @@
 # FOLD Preview
 
-Interactive preview and editor support for FOLD (Flexible Origami File Format) files. View, edit, and format your .fold files with ease.
+Interactive preview and editor support for FOLD (Flexible Origami List Datastructure) files. View, edit, and format your .fold files with ease.
 
 ## Features
 
 ### 🔍 Interactive Preview
 Watch your FOLD files come to life with a real-time, interactive preview:
 - Pan and zoom controls
-- Color-coded mountain and valley folds
+- Customizable fold styles and colors
 - Live updates as you edit
 - Keyboard shortcuts for quick navigation
+- Interactive legend
 
 ![Preview Demo](media/image.png)
 
@@ -39,20 +40,35 @@ Keep your FOLD files clean and consistent:
 - Right-click → Format Document
 - Automatic formatting on save (optional)
 
-## Configuration
+## Customization
 
-Customize the indentation in your settings:
+### 🎨 Visual Settings
+Easily customize through VS Code's Settings UI:
+- Colors for each fold type
+- Line styles (solid, dashed, dotted, dash-dot)
+- Vertex appearance
+- Canvas background and padding
+- Zoom speed and behavior
+
+### 📝 Default Styles
+Out of the box, you'll get:
+- Mountain folds: Red, dash-dot style
+- Valley folds: Blue, dashed style
+- Boundary edges: Black, solid style
+- Visible vertices
+- White background
+
+### ⚙️ Advanced Configuration
+Fine-tune everything in settings.json:
 ```json
 {
-    "fold-preview.tabSize": 2  // Set your preferred indent size (1-8)
+    "fold-preview.colors.mountain": "#FF0000",
+    "fold-preview.lineStyles.mountainStyle": "dashed-dotted",
+    "fold-preview.vertices.show": true,
+    "fold-preview.canvas.backgroundColor": "#FFFFFF"
 }
 ```
-
-## Color Guide
-The preview uses intuitive colors:
-- ⚫ **Black**: Boundary edges
-- 🔴 **Red**: Mountain folds
-- 🔵 **Blue**: Valley folds
+Access all settings through VS Code's Settings UI under Extensions > FOLD Preview.
 
 ## Requirements
 

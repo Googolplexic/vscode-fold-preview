@@ -2,7 +2,7 @@
   "name": "fold-preview",
   "displayName": "FOLD Preview",
   "description": "Preview FOLD origami files and format the text as JSON",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "ColemanLai",
   "marketplace": {
     "markdown": "MARKETPLACE.md",
@@ -29,18 +29,164 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "configuration": {
-      "title": "FOLD Preview",
-      "properties": {
-        "fold-preview.tabSize": {
-          "type": "number",
-          "default": 2,
-          "minimum": 1,
-          "maximum": 8,
-          "description": "Number of spaces to use for indentation in FOLD files"
+    "configuration": [
+      {
+        "title": "FOLD Preview",
+        "properties": {
+          "fold-preview.tabSize": {
+            "type": "number",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 8,
+            "description": "Number of spaces to use for indentation in FOLD files",
+            "order": 1
+          }
+        }
+      },
+      {
+        "title": "Colors",
+        "properties": {
+          "fold-preview.colors.mountain": {
+            "type": "string",
+            "default": "#FF0000",
+            "description": "Color for mountain folds",
+            "format": "color",
+            "order": 1
+          },
+          "fold-preview.colors.valley": {
+            "type": "string",
+            "default": "#0000FF",
+            "description": "Color for valley folds",
+            "format": "color",
+            "order": 2
+          },
+          "fold-preview.colors.boundary": {
+            "type": "string",
+            "default": "#000000",
+            "description": "Color for boundary lines",
+            "format": "color",
+            "order": 3
+          },
+          "fold-preview.colors.flat": {
+            "type": "string",
+            "default": "#808080",
+            "description": "Color for flat folds",
+            "format": "color",
+            "order": 4
+          },
+          "fold-preview.colors.unassigned": {
+            "type": "string",
+            "default": "#CCCCCC",
+            "description": "Color for unassigned edges",
+            "format": "color",
+            "order": 5
+          }
+        }
+      },
+      {
+        "title": "Line Styles",
+        "properties": {
+          "fold-preview.lineStyles.lineWidth": {
+            "type": "number",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Width of fold lines",
+            "order": 1
+          },
+          "fold-preview.lineStyles.mountainStyle": {
+            "type": "string",
+            "enum": [
+              "solid",
+              "dashed",
+              "dotted",
+              "dashed-dotted"
+            ],
+            "enumDescriptions": [
+              "Solid line",
+              "Dashed line (- - -)",
+              "Dotted line (. . .)",
+              "Dashed-dotted line (- . - .)"
+            ],
+            "default": "solid",
+            "description": "Line style for mountain folds",
+            "order": 2
+          },
+          "fold-preview.lineStyles.valleyStyle": {
+            "type": "string",
+            "enum": [
+              "solid",
+              "dashed",
+              "dotted",
+              "dashed-dotted"
+            ],
+            "enumDescriptions": [
+              "Solid line",
+              "Dashed line (- - -)",
+              "Dotted line (. . .)",
+              "Dashed-dotted line (- . - .)"
+            ],
+            "default": "solid",
+            "description": "Line style for valley folds",
+            "order": 3
+          }
+        }
+      },
+      {
+        "title": "Vertices",
+        "properties": {
+          "fold-preview.vertices.show": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show vertex points",
+            "order": 1
+          },
+          "fold-preview.vertices.radius": {
+            "type": "number",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Size of vertex points",
+            "order": 2
+          },
+          "fold-preview.vertices.color": {
+            "type": "string",
+            "default": "#000000",
+            "description": "Color of vertex points",
+            "format": "color",
+            "order": 3
+          }
+        }
+      },
+      {
+        "title": "Canvas",
+        "properties": {
+          "fold-preview.canvas.backgroundColor": {
+            "type": "string",
+            "default": "#FFFFFF",
+            "description": "Background color of the canvas",
+            "format": "color",
+            "order": 1
+          },
+          "fold-preview.canvas.padding": {
+            "type": "number",
+            "default": 40,
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Padding around the diagram (in pixels)",
+            "order": 2
+          },
+          "fold-preview.canvas.zoomSpeed": {
+            "type": "number",
+            "default": 0.1,
+            "minimum": 0.01,
+            "maximum": 0.5,
+            "description": "Speed of zoom when using mouse wheel",
+            "order": 3
+          }
         }
       }
-    },
+    ],
     "customEditors": [
       {
         "viewType": "fold-preview.preview",

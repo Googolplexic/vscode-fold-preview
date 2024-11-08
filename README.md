@@ -1,6 +1,6 @@
 # FOLD Preview - VS Code Extension
 
-A VS Code extension for previewing and editing FOLD (Flexible Origami File Format) files. This extension provides syntax highlighting, formatting, and an interactive preview for .fold files.
+A VS Code extension for previewing and editing FOLD (Flexible Origami List Datastructure) files. This extension provides syntax highlighting, formatting, and an interactive preview for .fold files.
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
@@ -10,9 +10,10 @@ A VS Code extension for previewing and editing FOLD (Flexible Origami File Forma
 
 ### Interactive Preview
 - Live preview of FOLD files with pan and zoom capabilities
-- Color-coded visualization of mountain and valley folds
+- Customizable visualization of mountain, valley, and boundary folds
 - Auto-updates as you edit the file
 - Keyboard shortcuts for common actions
+- Interactive legend showing fold types and styles
 
 ### Editor Features
 - Syntax highlighting for .fold files
@@ -50,20 +51,57 @@ Install from the [Visual Studio Code Marketplace](https://marketplace.visualstud
 
 ## Configuration
 
-### Indentation
-Customize the number of spaces used for indentation in your VS Code settings:
+All settings can be configured through VS Code's Settings UI (File > Preferences > Settings > Extensions > FOLD Preview) or settings.json.
 
+### Colors
+Customize the colors for different fold types:
 ```json
 {
-    "fold-preview.tabSize": 2  // Default is 2, range: 1-8
+    "fold-preview.colors.mountain": "#FF0000",
+    "fold-preview.colors.valley": "#0000FF",
+    "fold-preview.colors.boundary": "#000000",
+    "fold-preview.colors.flat": "#808080",
+    "fold-preview.colors.unassigned": "#CCCCCC"
 }
 ```
 
-## Line Types
-The preview uses different colors to represent fold types:
-- Black: Boundary edges
-- Red: Mountain folds
-- Blue: Valley folds
+### Line Styles
+Configure line appearance:
+```json
+{
+    "fold-preview.lineStyles.lineWidth": 2,
+    "fold-preview.lineStyles.mountainStyle": "dashed-dotted",
+    "fold-preview.lineStyles.valleyStyle": "dashed"
+}
+```
+Available line styles:
+- `solid`: Continuous line
+- `dashed`: Dashed line (- - -)
+- `dotted`: Dotted line (. . .)
+- `dashed-dotted`: Dash-dot line (-.-.-.)
+
+### Vertices
+Control vertex display:
+```json
+{
+    "fold-preview.vertices.show": true,
+    "fold-preview.vertices.radius": 2,
+    "fold-preview.vertices.color": "#000000"
+}
+```
+
+### Canvas
+Adjust canvas appearance:
+```json
+{
+    "fold-preview.canvas.backgroundColor": "#FFFFFF",
+    "fold-preview.canvas.padding": 40,
+    "fold-preview.canvas.zoomSpeed": 0.1,
+    "fold-preview.tabSize": 2
+}
+```
+
+Default settings will be applied on first use but can be customized at any time through the Settings UI or settings.json.
 
 ## Requirements
 
@@ -89,6 +127,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Release Notes
 
 See [CHANGELOG.md](https://github.com/Googolplexic/vscode-fold-preview/CHANGELOG.md)
+
 ---
 
 **Enjoy!**
