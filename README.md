@@ -1,71 +1,95 @@
-# fold-preview README
+# FOLD Preview - VS Code Extension
 
-This is the README for your extension "fold-preview". After writing up a brief description, we recommend including the following sections.
+A VS Code extension for previewing and editing FOLD files. This extension provides syntax highlighting, formatting, and an interactive preview for .fold files. Preview only for 2D fold files (Crease Patterns)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Interactive Preview
+- Live preview of FOLD files with pan and zoom capabilities
+- Color-coded visualization of mountain and valley folds
+- Auto-updates as you edit the file
+- Keyboard shortcuts for common actions
 
-For example if there is an image subfolder under your extension project workspace:
+### Editor Features
+- Syntax highlighting for .fold files
+- JSON formatting with customizable indentation
+- Format on save support
+- Custom file icon with folded corner design
+- Bracket matching and auto-closing pairs
 
-\!\[feature X\]\(images/feature-x.png\)
+## Installation
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. Open VS Code
+2. Press `Ctrl+P` (`Cmd+P` on macOS)
+3. Type `ext install fold-preview`
+4. Press Enter
+
+Or install it from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=fold-preview).
+
+## Usage
+
+### Opening the Preview
+- Click the "Open Preview to the Side" button in the editor title area
+- Use the keyboard shortcut `Ctrl+K V` (`Cmd+K V` on macOS)
+- Right-click on a .fold file and select "Open With... > FOLD Preview"
+
+### Preview Controls
+- Zoom: Mouse wheel or `+`/`-` keys
+- Pan: Click and drag
+- Reset View: `R` key or "Reset Zoom" button
+- Fit to View: `F` key or "Fit to View" button
+
+### Formatting
+- Use `Shift+Alt+F` to format the document
+- Right-click and select "Format Document"
+- Enable format on save in VS Code settings
+
+## Configuration
+
+### Indentation
+Customize the number of spaces used for indentation in your VS Code settings:
+
+```json
+{
+    "fold-preview.tabSize": 2  // Default is 2, range: 1-8
+}
+```
+
+## Line Types
+The preview uses different colors to represent fold types:
+- Black: Boundary edges
+- Red: Mountain folds
+- Blue: Valley folds
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- Visual Studio Code version 1.80.0 or higher
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Please report any issues on the [GitHub repository](https://github.com/yourusername/fold-preview/issues).
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License
+
+## Acknowledgements
+
+- FOLD file specification: https://github.com/edemaine/fold
+- Claude AI by Anthropic
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+### 0.0.1
+- Initial release
+- Basic preview functionality
+- JSON formatting support
+- File icons
 
 ---
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
