@@ -257,22 +257,20 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                                 '</div>';
                         }).join('');
 
-                        // Initialize all canvases
+                        // Initialize all legend canvases
                         document.querySelectorAll('.legend-canvas').forEach(canvas => {
                             const ctx = canvas.getContext('2d');
                             const color = canvas.getAttribute('data-color');
                             const style = canvas.getAttribute('data-style');
                             
-                            // Clear canvas and set background color to match main canvas
                             ctx.fillStyle = config.canvas.backgroundColor;
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
                             
-                            // Draw line
                             ctx.beginPath();
                             ctx.strokeStyle = color;
                             ctx.lineWidth = config.lineStyles.lineWidth;
                             
-                            // Set line style
+                            // Use same dash pattern scaling for legend
                             switch(style) {
                                 case 'dashed':
                                     ctx.setLineDash([5, 4]);
@@ -287,7 +285,6 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                                     ctx.setLineDash([]);
                             }
                             
-                            // Draw the line in the middle of the canvas
                             ctx.moveTo(0, 5);
                             ctx.lineTo(32, 5);
                             ctx.stroke();
@@ -295,21 +292,23 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     }
 
                     function setDashPattern(style) {
-                    switch (style) {
-                        case 'dashed':
-                            ctx.setLineDash([5, 5]);
-                            break;
-                        case 'dotted':
-                            ctx.setLineDash([1, 5]);
-                            break;
-                        case 'dashed-dotted':
-                            ctx.setLineDash([5, 5, 1, 5]);
-                            break;
-                        default:
-                            ctx.setLineDash([]);
+                        // Scale the dash patterns based on zoom level
+                        const scale = 1 / zoomLevel;
+                        
+                        switch (style) {
+                            case 'dashed':
+                                ctx.setLineDash([5 * scale, 5 * scale]);
+                                break;
+                            case 'dotted':
+                                ctx.setLineDash([1 * scale, 5 * scale]);
+                                break;
+                            case 'dashed-dotted':
+                                ctx.setLineDash([5 * scale, 5 * scale, 1 * scale, 5 * scale]);
+                                break;
+                            default:
+                                ctx.setLineDash([]);
                         }
                     }
-
                     // Zoom and pan controls implementation
                     document.getElementById('zoomIn').onclick = () => adjustZoom(1.2);
                     document.getElementById('zoomOut').onclick = () => adjustZoom(0.8);
@@ -344,16 +343,47 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     });
 
                     canvas.addEventListener('wheel', (e) => {
-                        e.preventDefault();
-                        const delta = -Math.sign(e.deltaY);
-                        const zoomSpeed = currentConfig?.canvas?.zoomSpeed || 0.1;
-                        adjustZoom(1 + delta * zoomSpeed);
-                    });
-
-                    function adjustZoom(factor) {
-                        zoomLevel *= factor;
-                        renderWithTransform();
+                    e.preventDefault();
+                    const rect = canvas.getBoundingClientRect();
+                    
+                    // Get mouse position relative to canvas
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    // Calculate zoom
+                    const delta = -Math.sign(e.deltaY);
+                    const zoomSpeed = currentConfig?.canvas?.zoomSpeed || 0.1;
+                    const scale = 1 + delta * zoomSpeed;
+                    
+                    const beforeX = (mouseX - panX) / zoomLevel;
+                    const beforeY = (mouseY - panY) / zoomLevel;
+                    
+                    zoomLevel *= scale;
+                    
+                    panX = mouseX - beforeX * zoomLevel;
+                    panY = mouseY - beforeY * zoomLevel;
+                    
+                    if (currentData) {
+                        renderFold(currentData);
                     }
+                });
+
+                function adjustZoom(scale) {
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    
+                    const beforeX = (centerX - panX) / zoomLevel;
+                    const beforeY = (centerY - panY) / zoomLevel;
+                    
+                    zoomLevel *= scale;
+                    
+                    panX = centerX - beforeX * zoomLevel;
+                    panY = centerY - beforeY * zoomLevel;
+                    
+                    if (currentData) {
+                        renderFold(currentData);
+                    }
+                }
 
                     function resetView() {
                         zoomLevel = 1;
@@ -403,17 +433,13 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     }
 
                     function renderFold(data) {
-                        if (!currentConfig) return;
-                        
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        
-                        // Set background color
-                        ctx.fillStyle = currentConfig.canvas.backgroundColor;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        
-                        if (!data.vertices_coords || !data.edges_vertices) {
+                        if (!currentConfig || !data.vertices_coords || !data.edges_vertices) {
                             return;
                         }
+
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = currentConfig.canvas.backgroundColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                         // Find bounds
                         let minX = Infinity, minY = Infinity;
@@ -426,39 +452,36 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             maxY = Math.max(maxY, y);
                         }
 
-                        // Calculate scale and offset
+                        // Calculate initial scale to fit content
                         const padding = currentConfig.canvas.padding;
                         const width = maxX - minX;
                         const height = maxY - minY;
                         const scaleX = (canvas.width - padding * 2) / width;
                         const scaleY = (canvas.height - padding * 2) / height;
-                        const scale = Math.min(scaleX, scaleY) * zoomLevel;
+                        const baseScale = Math.min(scaleX, scaleY);
+
+                        const offsetX = (canvas.width - width * baseScale) / 2;
+                        const offsetY = (canvas.height - height * baseScale) / 2;
 
                         ctx.save();
+                        
+                        // Apply transforms
                         ctx.translate(panX, panY);
+                        ctx.scale(zoomLevel, zoomLevel);
 
-                        const offsetX = (canvas.width - width * scale) / 2;
-                        const offsetY = (canvas.height - height * scale) / 2;
-
-                        // Draw edges
-                        ctx.lineCap = 'round';
-                        ctx.lineWidth = currentConfig.lineStyles.lineWidth;
-
+                        // Set up edge styles
                         const edgeTypes = {
                             'B': { color: currentConfig.colors.boundary },
-                            'M': { 
-                                color: currentConfig.colors.mountain,
-                                style: currentConfig.lineStyles.mountainStyle
-                            },
-                            'V': { 
-                                color: currentConfig.colors.valley,
-                                style: currentConfig.lineStyles.valleyStyle
-                            },
+                            'M': { color: currentConfig.colors.mountain, style: currentConfig.lineStyles.mountainStyle },
+                            'V': { color: currentConfig.colors.valley, style: currentConfig.lineStyles.valleyStyle },
                             'F': { color: currentConfig.colors.flat },
                             'U': { color: currentConfig.colors.unassigned }
                         };
 
-                        // Draw edges by type
+                        // Draw edges
+                        ctx.lineCap = 'round';
+                        ctx.lineWidth = currentConfig.lineStyles.lineWidth / zoomLevel;
+
                         for (let i = 0; i < data.edges_vertices.length; i++) {
                             const assignment = data.edges_assignment[i];
                             const edgeType = edgeTypes[assignment];
@@ -473,35 +496,29 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             const [x1, y1] = data.vertices_coords[v1];
                             const [x2, y2] = data.vertices_coords[v2];
 
-                            ctx.moveTo(
-                                (x1 - minX) * scale + offsetX,
-                                (y1 - minY) * scale + offsetY
-                            );
-                            ctx.lineTo(
-                                (x2 - minX) * scale + offsetX,
-                                (y2 - minY) * scale + offsetY
-                            );
+                            const tx1 = (x1 - minX) * baseScale + offsetX;
+                            const ty1 = (y1 - minY) * baseScale + offsetY;
+                            const tx2 = (x2 - minX) * baseScale + offsetX;
+                            const ty2 = (y2 - minY) * baseScale + offsetY;
+
+                            ctx.moveTo(tx1, ty1);
+                            ctx.lineTo(tx2, ty2);
                             ctx.stroke();
                         }
 
-                        // Draw vertices if enabled
+                        // Draw vertices
                         if (currentConfig.vertices.show) {
                             ctx.fillStyle = currentConfig.vertices.color;
                             ctx.beginPath();
                             for (const [x, y] of data.vertices_coords) {
-                                ctx.moveTo(
-                                    (x - minX) * scale + offsetX,
-                                    (y - minY) * scale + offsetY
-                                );
-                                ctx.arc(
-                                    (x - minX) * scale + offsetX,
-                                    (y - minY) * scale + offsetY,
-                                    currentConfig.vertices.radius, 0, Math.PI * 2
-                                );
+                                const tx = (x - minX) * baseScale + offsetX;
+                                const ty = (y - minY) * baseScale + offsetY;
+                                ctx.moveTo(tx, ty);
+                                ctx.arc(tx, ty, currentConfig.vertices.radius / zoomLevel, 0, Math.PI * 2);
                             }
                             ctx.fill();
                         }
-                        
+
                         ctx.restore();
                     }
 

@@ -1,6 +1,10 @@
-# Change Log
+# Changelog
 
 All notable changes to the "fold-preview" extension will be documented in this file.
+
+### 1.0.0
+**Ready for full release**
+- Updated zoom function
 
 ### 0.0.4
 - Updated legend display
