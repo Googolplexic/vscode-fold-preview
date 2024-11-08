@@ -176,15 +176,59 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     .legend-canvas {
                         width: 30px;
                         height: 10px;
+                    },
+                    .controls {
+                        display: flex;
+                        gap: 10px;
+                        margin-bottom: 10px;
+                        font-family: var(--vscode-editor-font-family);
+                        flex-wrap: wrap;
+                    }
+                    .control-group {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                        padding: 5px;
+                        border-right: 1px solid var(--vscode-panel-border);
+                    }
+                    .control-group:last-child {
+                        border-right: none;
+                    }
+                    .toggle-label {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        user-select: none;
+                        color: var(--vscode-editor-foreground);
+                    }
+                    .checkbox-input {
+                        margin: 0;
+                        cursor: pointer;
                     }
                 </style>
             </head>
             <body>
                 <div class="controls">
-                    <button class="btn" id="zoomIn">Zoom In (+)</button>
-                    <button class="btn" id="zoomOut">Zoom Out (-)</button>
-                    <button class="btn" id="reset">Reset Zoom (R)</button>
-                    <button class="btn" id="fitToView">Fit to View (F)</button>
+                    <div class="control-group">
+                        <button class="btn" id="zoomIn">Zoom In (+)</button>
+                        <button class="btn" id="zoomOut">Zoom Out (-)</button>
+                        <button class="btn" id="reset">Reset Zoom (R)</button>
+                        <button class="btn" id="fitToView">Fit to View (F)</button>
+                    </div>
+                    <div class="control-group">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="showVertexLabels" class="checkbox-input">
+                            Vertex Labels
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="showEdgeLabels" class="checkbox-input">
+                            Edge Labels
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="showFaceLabels" class="checkbox-input">
+                            Face Labels
+                        </label>
+                    </div>
                 </div>
                 <div class="container">
                     <canvas id="preview" width="800" height="800"></canvas>
@@ -205,6 +249,60 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     let isDragging = false;
                     let lastX = 0;
                     let lastY = 0;
+                    // At the start of the script section, with other variable declarations
+                    let showVertexLabels = false;
+                    let showEdgeLabels = false;
+                    let showFaceLabels = false;
+
+                    document.getElementById('showVertexLabels').addEventListener('change', (e) => {
+                        showVertexLabels = e.target.checked;
+                        if (currentData) {
+                            renderFold(currentData);
+                        }
+                    });
+
+                    document.getElementById('showEdgeLabels').addEventListener('change', (e) => {
+                        showEdgeLabels = e.target.checked;
+                        if (currentData) {
+                            renderFold(currentData);
+                        }
+                    });
+
+                    document.getElementById('showFaceLabels').addEventListener('change', (e) => {
+                        showFaceLabels = e.target.checked;
+                        if (currentData) {
+                            renderFold(currentData);
+                        }
+                    });
+
+                    function drawLabelCircle(ctx, x, y, text, type) {
+                        const radius = currentConfig.labels.circleRadius;
+                        const bgColor = type === 'vertex' ? currentConfig.labels.vertex.background :
+                                    type === 'edge' ? currentConfig.labels.edge.background :
+                                    currentConfig.labels.face.background;
+                        const borderColor = currentConfig.labels.circleBorder;
+                        const borderWidth = currentConfig.labels.borderWidth;
+                        const fontSize = currentConfig.labels.fontSize;
+                        const textColor = currentConfig.labels.textColor;
+                        
+                        // Set text alignment properties each time
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        
+                        // Draw circle background
+                        ctx.beginPath();
+                        ctx.fillStyle = bgColor;
+                        ctx.strokeStyle = borderColor;
+                        ctx.lineWidth = borderWidth / zoomLevel;
+                        ctx.arc(x, y, radius / zoomLevel, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        // Draw text
+                        ctx.font = (fontSize / zoomLevel) + 'px monospace';
+                        ctx.fillStyle = textColor;
+                        ctx.fillText(text, x, y);
+                    }
 
                     function updateLegend(config) {
                         const items = [
@@ -485,6 +583,42 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             }
                             ctx.fill();
                         }
+                        
+                        const labelOffset = currentConfig.labels.offset;
+
+                        if (showVertexLabels && data.vertices_coords) {
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            data.vertices_coords.forEach((coords, i) => {
+                                const [x, y] = coords;
+                                const tx = (x - minX) * baseScale + offsetX;
+                                const ty = (y - minY) * baseScale + offsetY;
+                                drawLabelCircle(ctx, tx, ty - (labelOffset / zoomLevel), i.toString(), 'vertex');
+                            });
+                        }
+
+                        if (showEdgeLabels && data.edges_vertices) {
+                            data.edges_vertices.forEach((vertices, i) => {
+                                const [v1, v2] = vertices;
+                                const [x1, y1] = data.vertices_coords[v1];
+                                const [x2, y2] = data.vertices_coords[v2];
+                                const tx1 = (x1 - minX) * baseScale + offsetX;
+                                const ty1 = (y1 - minY) * baseScale + offsetY;
+                                const tx2 = (x2 - minX) * baseScale + offsetX;
+                                const ty2 = (y2 - minY) * baseScale + offsetY;
+                                drawLabelCircle(ctx, (tx1 + tx2)/2, (ty1 + ty2)/2 - (labelOffset / zoomLevel), i.toString(), 'edge');
+                            });
+                        }
+
+                        if (showFaceLabels && data.faces_vertices) {
+                            data.faces_vertices.forEach((vertices, i) => {
+                                const centerX = vertices.reduce((sum, v) => sum + data.vertices_coords[v][0], 0) / vertices.length;
+                                const centerY = vertices.reduce((sum, v) => sum + data.vertices_coords[v][1], 0) / vertices.length;
+                                const tx = (centerX - minX) * baseScale + offsetX;
+                                const ty = (centerY - minY) * baseScale + offsetY;
+                                drawLabelCircle(ctx, tx, ty, i.toString(), 'face');
+                            });
+                        }
 
                         ctx.restore();
                     }
@@ -492,12 +626,8 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     // Handle window resize
                     window.addEventListener('resize', () => {
                         const container = document.querySelector('.container');
-                        const size = Math.min(
-                            container.clientWidth,
-                            container.clientHeight
-                        );
-                        canvas.width = size;
-                        canvas.height = size;
+                        canvas.width = window.innerWidth - 40;  // 40px for padding
+                        canvas.height = window.innerHeight - 100;  // 100px to account for controls and padding
                         
                         if (currentData) {
                             renderFold(currentData);
@@ -534,7 +664,19 @@ export function activate(context: vscode.ExtensionContext) {
         'canvas.backgroundColor': '#FFFFFF',
         'canvas.padding': 40,
         'canvas.zoomSpeed': 0.1,
-        'tabSize': 2
+        'tabSize': 2,
+        'labels.circleRadius': 10,
+        'labels.vertex.background': '#FFE082',  
+        'labels.edge.background': '#90CAF9',     
+        'labels.face.background': '#EF9A9A',      
+        'labels.circleBorder': '#000000',
+        'labels.borderWidth': 1,
+        'labels.fontSize': 12,
+        'labels.textColor': '#000000',
+        'labels.offset': 16,
+        'labels.showVertices': false,
+        'labels.showEdges': false,
+        'labels.showFaces': false
     };
 
     // Update each setting if it hasn't been set

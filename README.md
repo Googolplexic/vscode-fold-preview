@@ -10,10 +10,12 @@ A VS Code extension for previewing and editing FOLD (Flexible Origami List Datas
 
 ### Interactive Preview
 - Live preview of FOLD files with pan and zoom capabilities
+- Full-window canvas support for maximum visibility
 - Customizable visualization of mountain, valley, and boundary folds
 - Auto-updates as you edit the file
 - Keyboard shortcuts for common actions
 - Interactive legend showing fold types and styles
+- Indexed labeling system for vertices, edges, and faces
 
 ### Editor Features
 - Syntax highlighting for .fold files
@@ -43,6 +45,7 @@ Install from the [Visual Studio Code Marketplace](https://marketplace.visualstud
 - Pan: Click and drag
 - Reset View: `R` key or "Reset Zoom" button
 - Fit to View: `F` key or "Fit to View" button
+- Labels: Toggle vertex, edge, and face indices using checkboxes
 
 ### Formatting
 - Use `Shift+Alt+F` to format the document
@@ -62,6 +65,22 @@ Customize the colors for different fold types:
     "fold-preview.colors.boundary": "#000000",
     "fold-preview.colors.flat": "#808080",
     "fold-preview.colors.unassigned": "#CCCCCC"
+}
+```
+
+### Label System
+Configure the appearance of index labels:
+```json
+{
+    "fold-preview.labels.circleRadius": 10,
+    "fold-preview.labels.vertex.background": "#FFE082",
+    "fold-preview.labels.edge.background": "#90CAF9",
+    "fold-preview.labels.face.background": "#EF9A9A",
+    "fold-preview.labels.circleBorder": "#000000",
+    "fold-preview.labels.borderWidth": 1,
+    "fold-preview.labels.fontSize": 12,
+    "fold-preview.labels.textColor": "#000000",
+    "fold-preview.labels.offset": 16
 }
 ```
 

@@ -1,8 +1,8 @@
 {
   "name": "fold-preview",
-  "displayName": "FOLD Preview",
+  "displayName": "Origami FOLD File Preview",
   "description": "Preview FOLD origami files and format the text as JSON",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "ColemanLai",
   "marketplace": {
     "markdown": "MARKETPLACE.md",
@@ -183,6 +183,69 @@
             "maximum": 0.5,
             "description": "Speed of zoom when using mouse wheel",
             "order": 3
+          }
+        }
+      },
+      {
+        "title": "Labels",
+        "properties": {
+          "fold-preview.labels.circleRadius": {
+            "type": "number",
+            "default": 10,
+            "minimum": 5,
+            "maximum": 30,
+            "description": "Radius of the label circle background"
+          },
+          "fold-preview.labels.vertex.background": {
+            "type": "string",
+            "default": "#FFFFFF",
+            "description": "Background color of vertex labels",
+            "format": "color"
+          },
+          "fold-preview.labels.edge.background": {
+            "type": "string",
+            "default": "#E0E0E0",
+            "description": "Background color of edge labels",
+            "format": "color"
+          },
+          "fold-preview.labels.face.background": {
+            "type": "string",
+            "default": "#FFEBEE",
+            "description": "Background color of face labels",
+            "format": "color"
+          },
+          "fold-preview.labels.circleBorder": {
+            "type": "string",
+            "default": "#000000",
+            "description": "Border color of label circles",
+            "format": "color"
+          },
+          "fold-preview.labels.borderWidth": {
+            "type": "number",
+            "default": 1,
+            "minimum": 0.5,
+            "maximum": 5,
+            "description": "Width of the circle border"
+          },
+          "fold-preview.labels.fontSize": {
+            "type": "number",
+            "default": 12,
+            "minimum": 8,
+            "maximum": 24,
+            "description": "Font size of labels"
+          },
+          "fold-preview.labels.textColor": {
+            "type": "string",
+            "default": "#000000",
+            "description": "Color of label text",
+            "format": "color"
+          },
+          "fold-preview.labels.offset": {
+            "type": "number",
+            "default": 16,
+            "minimum": 0,
+            "maximum": 50,
+            "description": "Vertical offset of labels from their anchor points"
           }
         }
       }

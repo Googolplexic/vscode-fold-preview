@@ -24,4 +24,11 @@ export type WorkspaceConfigLike = {
     get(section: 'canvas.padding'): number;
     get(section: 'canvas.zoomSpeed'): number;
     [key: string]: unknown;
+    get(section: 'labels.circleRadius'): number;
+    get(section: 'labels.circleBackground'): string;
+    get(section: 'labels.circleBorder'): string;
+    get(section: 'labels.borderWidth'): number;
+    get(section: 'labels.fontSize'): number;
+    get(section: 'labels.textColor'): string;
+    get(section: 'labels.offset'): number;
 };

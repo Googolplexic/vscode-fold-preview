@@ -2,6 +2,17 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 1.1.0
+- Added indexed labeling system
+  - Toggle labels for vertices, edges, and faces
+  - Customizable label circles
+  - Configurable label appearance:
+- Implemented full-window canvas support
+- Added more config options to Settings UI
+
+### 1.0.2
+- Changed name on marketplace
+
 ### 1.0.1
 - Refactored and cleaned up code
 
