@@ -295,34 +295,41 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         }
                     });
 
-                    function drawLabelCircle(ctx, x, y, text, type) {
-                        const radius = currentConfig.labels.circleRadius;
-                        const bgColor = type === 'vertex' ? currentConfig.labels.vertex.background :
-                                    type === 'edge' ? currentConfig.labels.edge.background :
-                                    currentConfig.labels.face.background;
-                        const borderColor = currentConfig.labels.circleBorder;
-                        const borderWidth = currentConfig.labels.borderWidth;
-                        const fontSize = currentConfig.labels.fontSize;
-                        const textColor = currentConfig.labels.textColor;
-                        
-                        // Set text alignment properties each time
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        
-                        // Draw circle background
-                        ctx.beginPath();
-                        ctx.fillStyle = bgColor;
-                        ctx.strokeStyle = borderColor;
-                        ctx.lineWidth = borderWidth / zoomLevel;
-                        ctx.arc(x, y, radius / zoomLevel, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.stroke();
-                        
-                        // Draw text
-                        ctx.font = (fontSize / zoomLevel) + 'px monospace';
-                        ctx.fillStyle = textColor;
-                        ctx.fillText(text, x, y);
+                function drawLabelCircle(ctx, x, y, text, type) {
+                    // Check if this type of label is actually visible
+                    if ((type === 'vertex' && !showVertexLabels) ||
+                        (type === 'edge' && !showEdgeLabels) ||
+                        (type === 'face' && !showFaceLabels)) {
+                        return; // Don't draw if this label type is hidden
                     }
+
+                    const radius = currentConfig.labels.circleRadius;
+                    const bgColor = type === 'vertex' ? currentConfig.labels.vertex.background :
+                                type === 'edge' ? currentConfig.labels.edge.background :
+                                currentConfig.labels.face.background;
+                    const borderColor = currentConfig.labels.circleBorder;
+                    const borderWidth = currentConfig.labels.borderWidth;
+                    const fontSize = currentConfig.labels.fontSize;
+                    const textColor = currentConfig.labels.textColor;
+                    
+                    // Set text alignment properties each time
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    // Draw circle background
+                    ctx.beginPath();
+                    ctx.fillStyle = bgColor;
+                    ctx.strokeStyle = borderColor;
+                    ctx.lineWidth = borderWidth / zoomLevel;
+                    ctx.arc(x, y, radius / zoomLevel, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // Draw text
+                    ctx.font = (fontSize / zoomLevel) + 'px monospace';
+                    ctx.fillStyle = textColor;
+                    ctx.fillText(text, x, y);
+                }
                     function updateLegend(config, data) {  // Add data parameter
                         const lineItems = [
                             { type: 'Boundary', color: config.colors.boundary },
@@ -541,13 +548,15 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     }
 
                     function fitToView() {
-                        if (!currentData) return;
+                        if (!currentData || !currentData.vertices_coords) return;
+                        
+                        // Simply reset transformations
                         zoomLevel = 1;
                         panX = 0;
                         panY = 0;
+                        
                         renderFold(currentData);
                     }
-
                     window.addEventListener('message', event => {
                         const message = event.data;
                         switch (message.type) {
@@ -669,6 +678,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                         
                         const labelOffset = currentConfig.labels.offset;
 
+                        // Only draw vertex labels if checkbox is checked
                         if (showVertexLabels && data.vertices_coords) {
                             ctx.textAlign = 'center';
                             ctx.textBaseline = 'middle';
@@ -680,6 +690,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             });
                         }
 
+                        // Only draw edge labels if checkbox is checked
                         if (showEdgeLabels && data.edges_vertices) {
                             data.edges_vertices.forEach((vertices, i) => {
                                 const [v1, v2] = vertices;
@@ -693,6 +704,7 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                             });
                         }
 
+                        // Only draw face labels if checkbox is checked AND faces exist
                         if (showFaceLabels && data.faces_vertices && Array.isArray(data.faces_vertices)) {
                             data.faces_vertices.forEach((vertices, i) => {
                                 const centerX = vertices.reduce((sum, v) => sum + data.vertices_coords[v][0], 0) / vertices.length;
@@ -716,15 +728,21 @@ class FoldPreviewProvider implements vscode.CustomTextEditorProvider {
                     // Handle window resize
                     window.addEventListener('resize', () => {
                         const container = document.querySelector('.container');
+                        const legend = document.getElementById('legend');
                         canvas.width = window.innerWidth - 40;  // 40px for padding
-                        canvas.height = window.innerHeight - 100;  // 100px to account for controls and padding
+                        
+                        // Get legend height only if it's visible
+                        const legendHeight = legend.style.display !== 'none' ? legend.offsetHeight + 20 : 0; // 20px for margins
+                        const controlsHeight = 60; // Height of controls section
+                        
+                        // Subtract both controls and legend height (if legend is visible)
+                        canvas.height = window.innerHeight - controlsHeight - legendHeight;
                         
                         if (currentData) {
                             renderFold(currentData);
                         }
                     });
 
-                    // Initial resize
                     window.dispatchEvent(new Event('resize'));
                 </script>
             </body>
@@ -752,7 +770,7 @@ export function activate(context: vscode.ExtensionContext) {
         'vertices.radius': 2,
         'vertices.color': '#000000',
         'canvas.backgroundColor': '#FFFFFF',
-        'canvas.padding': 40,
+        'canvas.padding': 80,
         'canvas.zoomSpeed': 0.1,
         'tabSize': 2,
         'labels.circleRadius': 10,

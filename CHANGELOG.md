@@ -2,6 +2,13 @@
 
 All notable changes to the "fold-preview" extension will be documented in this file.
 
+### 1.2.3
+
+- Fixed issue with labels not showing up on some models
+
+### 1.2.2
+- Fit to view fix
+
 ### 1.2.1
 - Forgot to update image again
 
