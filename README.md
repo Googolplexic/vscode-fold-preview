@@ -2,6 +2,8 @@
 
 A VS Code extension for previewing and editing FOLD (Flexible Origami List Datastructure) files. This extension provides syntax highlighting, formatting, and an interactive preview for .fold files.
 
+Write-up: https://www.colemanlai.com/portfolio/fold-preview
+
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/ColemanLai.fold-preview)](https://marketplace.visualstudio.com/items?itemName=ColemanLai.fold-preview)
 [![GitHub](https://img.shields.io/github/license/Googolplexic/vscode-fold-preview)](https://github.com/Googolplexic/vscode-fold-preview/blob/main/LICENSE)
